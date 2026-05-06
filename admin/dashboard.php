@@ -11,9 +11,8 @@ $pageTitle = 'Admin Dashboard';
 require_once '../includes/auth.php';
 requireAdminLogin();
 
-// ============================================
 // STATISTICS (using joined & aggregate queries)
-// ============================================
+// 
 
 // Child status counts (lifecycle: available / reserved / adopted)
 $childStats = $pdo->query("
@@ -100,6 +99,23 @@ $recentPrefUpdates = $pdo->query("
     ORDER BY u.updated_at DESC
     LIMIT 5
 ")->fetchAll();
+
+// Recent feedback
+$recentFeedback = $pdo->query("
+    SELECT af.rating, af.feedback_text, af.is_anonymous, af.created_at,
+           u.full_name as user_name,
+           o.full_name as orphan_name
+    FROM adoption_feedback af
+    JOIN users u ON af.user_id = u.id
+    JOIN adoption_requests ar ON af.adoption_request_id = ar.id
+    JOIN orphans o ON ar.orphan_id = o.id
+    ORDER BY af.created_at DESC
+    LIMIT 3
+")->fetchAll();
+
+$avgFeedbackRating = $pdo->query("SELECT COALESCE(ROUND(AVG(rating), 1), 0) FROM adoption_feedback")->fetchColumn();
+$totalFeedbackCount = $pdo->query("SELECT COUNT(*) FROM adoption_feedback")->fetchColumn();
+$pendingFeedbackResponse = $pdo->query("SELECT COUNT(*) FROM adoption_feedback WHERE admin_response IS NULL")->fetchColumn();
 
 require_once '../includes/header.php';
 ?>
@@ -429,6 +445,54 @@ require_once '../includes/header.php';
                     </div>
                 <?php endif; ?>
             </div>
+        </div>
+    </div>
+
+    <!-- Recent Feedback -->
+    <div class="card" style="margin-top: 24px;">
+        <div class="card-header">
+            <h3><i class="fas fa-comment-dots" style="color: #f9a825;"></i> Recent Feedback
+                <?php if ($totalFeedbackCount > 0): ?>
+                <span class="badge badge-primary" style="font-size: 0.7rem; margin-left: 8px;"><?php echo $avgFeedbackRating; ?> ⭐ avg</span>
+                <?php endif; ?>
+            </h3>
+            <a href="feedback.php" class="btn btn-sm btn-outline">View All</a>
+        </div>
+        <div class="card-body">
+            <?php if ($pendingFeedbackResponse > 0): ?>
+            <div style="padding: 10px 14px; background: rgba(253,203,110,0.1); border: 1px solid rgba(253,203,110,0.2); border-radius: var(--radius-sm); margin-bottom: 16px; font-size: 0.85rem; color: var(--warning);">
+                <i class="fas fa-bell"></i> <strong><?php echo $pendingFeedbackResponse; ?></strong> feedback<?php echo $pendingFeedbackResponse > 1 ? 's' : ''; ?> awaiting your response.
+                <a href="feedback.php?filter=pending" style="margin-left: 8px; font-weight: 600;">Respond now →</a>
+            </div>
+            <?php endif; ?>
+
+            <?php if (!empty($recentFeedback)): ?>
+                <?php foreach ($recentFeedback as $fb): ?>
+                <div class="detail-row" style="align-items: flex-start; padding: 12px 0;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <strong style="font-size: 0.88rem;"><?php echo $fb['is_anonymous'] ? 'Anonymous' : htmlspecialchars($fb['user_name']); ?></strong>
+                            <span class="star-display" style="font-size: 0.85rem;">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <i class="fas fa-star <?php echo $i <= $fb['rating'] ? 'star-filled' : 'star-empty'; ?>"></i>
+                                <?php endfor; ?>
+                            </span>
+                        </div>
+                        <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 2px;">
+                            <?php echo htmlspecialchars(mb_strimwidth($fb['feedback_text'], 0, 80, '...')); ?>
+                        </p>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">
+                            Adopted <?php echo htmlspecialchars($fb['orphan_name']); ?> • <?php echo formatDate($fb['created_at']); ?>
+                        </span>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="empty-state" style="padding: 20px;">
+                    <i class="fas fa-comment-dots" style="font-size: 1.5rem;"></i>
+                    <p>No feedback received yet.</p>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>

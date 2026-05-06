@@ -46,6 +46,7 @@ $baseUrl = '/orphanage-management-system';
                     <li><a href="<?php echo $baseUrl; ?>/admin/verify_users.php" class="<?php echo $currentPage === 'verify_users' ? 'active' : ''; ?>"><i class="fas fa-user-check"></i> Verify</a></li>
                     <li><a href="<?php echo $baseUrl; ?>/admin/donations.php" class="<?php echo $currentPage === 'donations' ? 'active' : ''; ?>"><i class="fas fa-hand-holding-heart"></i> Donations</a></li>
                     <li><a href="<?php echo $baseUrl; ?>/admin/adoptions.php" class="<?php echo $currentPage === 'adoptions' ? 'active' : ''; ?>"><i class="fas fa-file-alt"></i> Adoptions</a></li>
+                    <li><a href="<?php echo $baseUrl; ?>/admin/feedback.php" class="<?php echo $currentPage === 'feedback' ? 'active' : ''; ?>"><i class="fas fa-comment-dots"></i> Feedback</a></li>
                     <li><a href="<?php echo $baseUrl; ?>/admin/matching.php" class="<?php echo $currentPage === 'matching' ? 'active' : ''; ?>"><i class="fas fa-magic"></i> Matching</a></li>
                     <li class="nav-user">
                         <span class="nav-user-name"><i class="fas fa-user-shield"></i> <?php echo $_SESSION['admin_name'] ?? 'Admin'; ?></span>
@@ -58,6 +59,7 @@ $baseUrl = '/orphanage-management-system';
                     <li><a href="<?php echo $baseUrl; ?>/user/donate.php" class="<?php echo $currentPage === 'donate' ? 'active' : ''; ?>"><i class="fas fa-hand-holding-heart"></i> Donate</a></li>
                     <li><a href="<?php echo $baseUrl; ?>/user/adopt.php" class="<?php echo $currentPage === 'adopt' ? 'active' : ''; ?>"><i class="fas fa-heart"></i> Adopt</a></li>
                     <li><a href="<?php echo $baseUrl; ?>/user/my_requests.php" class="<?php echo $currentPage === 'my_requests' ? 'active' : ''; ?>"><i class="fas fa-clipboard-list"></i> My Requests</a></li>
+                    <li><a href="<?php echo $baseUrl; ?>/user/feedback.php" class="<?php echo $currentPage === 'feedback' ? 'active' : ''; ?>"><i class="fas fa-comment-dots"></i> Feedback</a></li>
                     <li class="nav-user">
                         <a href="<?php echo $baseUrl; ?>/user/profile.php" class="nav-user-name"><i class="fas fa-user"></i> <?php echo $_SESSION['user_name'] ?? 'User'; ?></a>
                         <a href="<?php echo $baseUrl; ?>/logout.php" class="btn btn-sm btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</a>

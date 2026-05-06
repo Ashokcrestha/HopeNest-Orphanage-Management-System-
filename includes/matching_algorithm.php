@@ -304,6 +304,9 @@ function calculateMatchScore($adopter, $child) {
     }
 
     // TOTAL SCORE (out of 100)
+
+
+
     $scores['total_score'] = round(
         $scores['age_score'] + $scores['gender_score'] + $scores['location_score'] +
         $scores['health_score'] + $scores['education_score'] + $scores['behavioral_score'] +

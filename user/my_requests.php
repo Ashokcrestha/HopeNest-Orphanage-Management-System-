@@ -147,10 +147,23 @@ require_once '../includes/header.php';
 
             <!-- COMPLETED -->
             <?php elseif ($req['status'] === 'completed'): ?>
+            <?php
+                // Check if feedback exists for this request
+                $fbCheck = $pdo->prepare("SELECT id FROM adoption_feedback WHERE adoption_request_id = ?");
+                $fbCheck->execute([$req['id']]);
+                $hasFeedback = $fbCheck->fetch();
+            ?>
             <div style="margin-top: 16px; padding: 20px; background: rgba(0,184,148,0.1); border: 1px solid rgba(0,184,148,0.2); border-radius: var(--radius-sm); text-align: center;">
                 <i class="fas fa-heart" style="color: var(--success); font-size: 2rem; margin-bottom: 12px;"></i>
                 <p style="color: var(--success); font-weight: 700; font-size: 1.1rem;">🎉 Adoption Finalized!</p>
                 <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px;">Congratulations! Your adoption has been completed. Thank you for providing a loving home.</p>
+                <div style="margin-top: 14px;">
+                    <?php if ($hasFeedback): ?>
+                        <a href="feedback.php" class="btn btn-sm btn-outline"><i class="fas fa-eye"></i> View Feedback</a>
+                    <?php else: ?>
+                        <a href="feedback.php" class="btn btn-sm btn-primary"><i class="fas fa-comment-dots"></i> Give Feedback</a>
+                    <?php endif; ?>
+                </div>
             </div>
 
             <!-- CANCELLED -->

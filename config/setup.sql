@@ -159,6 +159,28 @@ CREATE TABLE IF NOT EXISTS user_documents (
 ) ENGINE=InnoDB;
 
 -- =============================================
+-- Table: adoption_feedback
+-- =============================================
+CREATE TABLE IF NOT EXISTS adoption_feedback (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    adoption_request_id INT NOT NULL,
+    user_id INT NOT NULL,
+    rating INT NOT NULL,
+    process_rating ENUM('excellent','good','average','poor') DEFAULT 'good',
+    communication_rating ENUM('excellent','good','average','poor') DEFAULT 'good',
+    support_rating ENUM('excellent','good','average','poor') DEFAULT 'good',
+    feedback_text TEXT NOT NULL,
+    suggestions TEXT DEFAULT NULL,
+    is_anonymous TINYINT(1) DEFAULT 0,
+    admin_response TEXT DEFAULT NULL,
+    responded_at TIMESTAMP NULL DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (adoption_request_id) REFERENCES adoption_requests(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_feedback (adoption_request_id)
+) ENGINE=InnoDB;
+
+-- =============================================
 -- Insert default admin account
 -- Password: password
 -- =============================================
